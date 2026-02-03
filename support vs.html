@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIチャットボット比較 | GBase Support</title>
+  <style>
+    :root {
+      --primary-color: #7C68FB;
+      --primary-light: #A395FC;
+      --primary-dark: #6454CB;
+      --text-dark: #0E0D13;
+      --text-gray: #5E6278;
+      --text-light: #8E94B1;
+      --bg-light: #F9FBFF;
+      --bg-white: #FFFFFF;
+      --border-color: #EEEFF8;
+      --success-color: #12B76A;
+      --warning-color: #F8AD04;
+      --footer-bg: #0E0D13;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      background-color: var(--bg-white);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 100px 0 80px;
+      text-align: center;
+      background: linear-gradient(180deg, var(--bg-light) 0%, var(--bg-white) 100%);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      color: white;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-gray);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Comparison Table Section */
+    .comparison-section {
+      padding: 80px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .section-title p {
+      color: var(--text-gray);
+      font-size: 16px;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--bg-white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .comparison-table thead {
+      background: var(--bg-light);
+    }
+
+    .comparison-table th {
+      padding: 24px 20px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .comparison-table th:first-child {
+      text-align: left;
+      width: 280px;
+    }
+
+    .comparison-table th.highlight {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      position: relative;
+    }
+
+    .comparison-table th.highlight::before {
+      content: "おすすめ";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--success-color);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .comparison-table td {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 15px;
+    }
+
+    .comparison-table td:first-child {
+      text-align: left;
+      font-weight: 500;
+    }
+
+    .comparison-table tbody tr:hover {
+      background-color: var(--bg-light);
+    }
+
+    .comparison-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Status Icons */
+    .status-excellent {
+      color: var(--success-color);
+      font-weight: 600;
+    }
+
+    .status-good {
+      color: var(--primary-color);
+    }
+
+    .status-limited {
+      color: var(--warning-color);
+    }
+
+    .status-none {
+      color: var(--text-light);
+    }
+
+    .check-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: #ECFDF3;
+      border-radius: 50%;
+      color: var(--success-color);
+      font-size: 16px;
+    }
+
+    .partial-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: #FEF5D1;
+      border-radius: 50%;
+      color: var(--warning-color);
+      font-size: 14px;
+    }
+
+    .none-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--bg-light);
+      border-radius: 50%;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    /* Highlight Column */
+    .highlight-col {
+      background: rgba(124, 104, 251, 0.04);
+    }
+
+    /* Advantages Section */
+    .advantages-section {
+      padding: 80px 0;
+      background: var(--bg-light);
+    }
+
+    .advantages-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 48px;
+    }
+
+    .advantage-card {
+      background: var(--bg-white);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .advantage-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .advantage-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .advantage-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .advantage-card p {
+      color: var(--text-gray);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 100px 0;
+      text-align: center;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: white;
+    }
+
+    .cta-section h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .cta-section p {
+      font-size: 18px;
+      opacity: 0.9;
+      margin-bottom: 40px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 16px 32px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: white;
+      color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background: var(--bg-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--footer-bg);
+      color: white;
+      padding: 60px 0 30px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-light);
+    }
+
+    .footer ul {
+      list-style: none;
+    }
+
+    .footer li {
+      margin-bottom: 12px;
+    }
+
+    .footer a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .footer a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .advantages-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .comparison-table {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding: 60px 0 40px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .advantages-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .comparison-table-wrapper {
+        overflow-x: auto;
+      }
+
+      .comparison-table {
+        min-width: 700px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <span class="hero-badge">🔍 AIチャットボット比較</span>
+      <h1>最適なAIソリューションを<br><span>GBase Support</span>で</h1>
+      <p>主要なAIチャットボットサービスとの機能比較をご覧ください。GBase Supportがあなたのビジネスに最適な理由をご確認いただけます。</p>
+    </div>
+  </section>
+
+  <!-- Comparison Table Section -->
+  <section class="comparison-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>機能比較表</h2>
+        <p>各サービスの主要機能を比較</p>
+      </div>
+
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>機能・特徴</th>
+              <th class="highlight">GBase Support</th>
+              <th>AIさくらさん</th>
+              <th>Map Penguin</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>導入の簡単さ</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">3ステップで即完了</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">カスタマイズ必要</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">設定が複雑</small></td>
+            </tr>
+            <tr>
+              <td>AI精度（Agentic RAG）</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">最新技術搭載</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">従来型AI</small></td>
+              <td><span class="none-icon">−</span><br><small class="status-none">AI非対応</small></td>
+            </tr>
+            <tr>
+              <td>ナレッジ自動構築</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">ファイル・URLから自動生成</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">手動登録が必要</small></td>
+              <td><span class="none-icon">−</span><br><small class="status-none">非対応</small></td>
+            </tr>
+            <tr>
+              <td>多言語対応</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">自動検出・多言語</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">4言語のみ</small></td>
+              <td><span class="check-icon">✓</span><br><small class="status-good">11言語対応</small></td>
+            </tr>
+            <tr>
+              <td>音声対話</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">標準搭載</small></td>
+              <td><span class="check-icon">✓</span><br><small class="status-good">別サービス</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">音声ガイドのみ</small></td>
+            </tr>
+            <tr>
+              <td>AIアバター</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">標準搭載</small></td>
+              <td><span class="check-icon">✓</span><br><small class="status-good">対応</small></td>
+              <td><span class="none-icon">−</span><br><small class="status-none">非対応</small></td>
+            </tr>
+            <tr>
+              <td>インタラクティブコンテンツ</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">キャンバス機能</small></td>
+              <td><span class="none-icon">−</span><br><small class="status-none">非対応</small></td>
+              <td><span class="check-icon">✓</span><br><small class="status-good">地図特化</small></td>
+            </tr>
+            <tr>
+              <td>メンテナンス</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">自動更新・再学習</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">定期メンテ必要</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">手動更新</small></td>
+            </tr>
+            <tr>
+              <td>無料トライアル</td>
+              <td class="highlight-col"><span class="check-icon">✓</span><br><small class="status-excellent">あり</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">要問い合わせ</small></td>
+              <td><span class="partial-icon">△</span><br><small class="status-limited">要問い合わせ</small></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantages Section -->
+  <section class="advantages-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>GBase Supportが選ばれる理由</h2>
+        <p>他社にはない独自の強みをご紹介</p>
+      </div>
+
+      <div class="advantages-grid">
+        <div class="advantage-card">
+          <div class="advantage-icon">⚡</div>
+          <h3>3ステップで導入完了</h3>
+          <p>名前を入力、ファイルをアップロード、コードを埋め込む。たったこれだけで、高性能なAIチャットボットが稼働します。</p>
+        </div>
+
+        <div class="advantage-card">
+          <div class="advantage-icon">🧠</div>
+          <h3>Agentic RAGで高精度</h3>
+          <p>最新のAgentic RAG技術により、文脈を理解し、意思決定を行い、ツールを活用する本物のAIアシスタントを実現。</p>
+        </div>
+
+        <div class="advantage-card">
+          <div class="advantage-icon">🔄</div>
+          <h3>メンテナンスフリー</h3>
+          <p>Webサイトの更新に合わせて自動で再学習。タグ付けや定期更新の手間なく、常に最新の情報を提供します。</p>
+        </div>
+
+        <div class="advantage-card">
+          <div class="advantage-icon">📄</div>
+          <h3>豊富なデータソース対応</h3>
+          <p>PDF、PPT、Excel、Webサイト、Gitbook、APIなど多様なソースから自動でナレッジベースを構築できます。</p>
+        </div>
+
+        <div class="advantage-card">
+          <div class="advantage-icon">🎨</div>
+          <h3>インタラクティブキャンバス</h3>
+          <p>地図、フォーム、動画など動的コンテンツを会話内に埋め込み可能。テキストだけでない豊かな対話体験を提供。</p>
+        </div>
+
+        <div class="advantage-card">
+          <div class="advantage-icon">🌏</div>
+          <h3>多言語・音声・アバター</h3>
+          <p>自動言語検出による多言語対応、自然な音声対話、親しみやすいAIアバター。グローバルなサポートを実現します。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>GBase Supportを体験してみませんか？</h2>
+      <p>無料トライアルで、AIが問い合わせ対応を自動化する世界を体験しよう</p>
+      <div class="cta-buttons">
+        <a href="https://admin.gbase.ai" class="btn btn-primary">無料で試す →</a>
+        <a href="/contact" class="btn btn-outline">お問い合わせ</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>SNS</h4>
+          <ul>
+            <li><a href="https://x.com/GBaseHub">X</a></li>
+            <li><a href="https://www.youtube.com/@sparticle_gbase">YouTube</a></li>
+            <li><a href="https://note.com/sparticle_gbase">Note</a></li>
+            <li><a href="https://discord.gg/zrA7SrHkDa">Discord</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>製品</h4>
+          <ul>
+            <li><a href="https://gbase.ai">GBase</a></li>
+            <li><a href="https://cs.gbase.ai">GBase Support</a></li>
+            <li><a href="https://subtitles.felo.me">Felo Subtitles</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>リソース</h4>
+          <ul>
+            <li><a href="/blog">ブログ</a></li>
+            <li><a href="/blog/release-notes/">リリースノート</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>企業情報</h4>
+          <ul>
+            <li><a href="https://sparticle.com">会社概要</a></li>
+            <li><a href="/contact">お問い合わせ</a></li>
+            <li><a href="/privacy-policy">プライバシーポリシー</a></li>
+            <li><a href="/terms-of-use">利用規約</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2025 Sparticle Inc. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
